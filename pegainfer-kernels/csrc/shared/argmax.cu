@@ -631,4 +631,27 @@ cudaError_t hedge_ladder_force_cuda(unsigned int* prev, unsigned int* sampled,
       prev, sampled, runners, req_map, n, c, j, runner_stride, block_size, step);
   return cudaGetLastError();
 }
+
+struct Top1Packet {
+  int id;
+  __nv_bfloat16 value;
+};
+
+__global__ void pack_top1_packets_kernel(const int* ids,
+                                         const __nv_bfloat16* values,
+                                         Top1Packet* packets, int rows) {
+  int row = blockIdx.x * blockDim.x + threadIdx.x;
+  if (row < rows) {
+    packets[row].id = ids[row];
+    packets[row].value = values[row];
+  }
+}
+
+void pack_top1_packets_cuda(const int* ids, const __nv_bfloat16* values,
+                            void* packets, int rows, cudaStream_t stream) {
+  int threads = 128;
+  int blocks = (rows + threads - 1) / threads;
+  pack_top1_packets_kernel<<<blocks, threads, 0, stream>>>(
+      ids, values, reinterpret_cast<Top1Packet*>(packets), rows);
+}
 }

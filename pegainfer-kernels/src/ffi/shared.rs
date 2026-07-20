@@ -1118,6 +1118,13 @@ unsafe extern "C" {
         n: i32,
         stream: CUstream,
     );
+    pub fn pack_top1_packets_cuda(
+        ids: *const i32,
+        values: *const Half,
+        packets: *mut core::ffi::c_void,
+        rows: i32,
+        stream: CUstream,
+    );
 
 }
 
