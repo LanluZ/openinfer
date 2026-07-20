@@ -16,6 +16,7 @@ use crossbeam_channel::unbounded;
 use cudarc::driver::CudaSlice;
 use cudarc::driver::DevicePtr;
 use cudarc::driver::DevicePtrMut;
+use cudarc::driver::HostSlice;
 use cudarc::driver::PinnedHostSlice;
 use cudarc::nccl::ReduceOp;
 use cudarc::nccl::safe::Comm;
